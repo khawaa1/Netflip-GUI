@@ -1,0 +1,86 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Feb 19 17:20:37 2021
+
+@author: Areeb
+"""
+
+import sys
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5 import uic
+
+
+class Appdemo(QMainWindow):
+    def __init__(self):
+        super(Appdemo, self).__init__()  # set up for application
+        
+        
+        uic.loadUi('MainUIOne.ui',self)   # load base qt designer ui file
+        self.UiComponents()
+        self.flashSplash()
+        
+        
+
+    def UiComponents(self):
+        
+        self.label_screensaver.setVisible(False)
+        self.start_timer.clicked.connect(self.startTimer)
+
+        self.label_time.setVisible(False)
+        fnt = QFont('Open Sans', 20, QFont.Bold)
+        self.label_time.setFont(fnt)
+
+        self.timer= QTimer(self)
+        self.timer.timeout.connect(self.displayTime)
+        
+    
+
+  
+
+    def displayTime(self):
+		#currentTime = QTime.currentTime()
+		#displayTime = currentTime.toString('hh:mm:ss')
+        self.currentTime = self.currentTime.addSecs(1)
+        set_time = self.currentTime.toString('hh:mm:ss')
+        if set_time == self.lineEdit_Time.text():
+            self.timer.stop
+            self.timer.setSingleShot(True)
+            self.label_screensaver.setVisible(True)
+        else:
+           self.label_time.setText(set_time)
+
+    def startTimer(self):
+        self.label_time.setVisible(True)
+        self.currentTime = QTime(00,00,00)
+        self.timer.setSingleShot(False)
+        self.displayTime()
+        self.timer.start(1000)    
+
+    def flashSplash(self):
+        self.splash = QSplashScreen(QPixmap('LogoOne.png'))
+
+        # By default, SplashScreen will be in the center of the screen.
+        # You can move it to a specific location if you want:
+        # self.splash.move(10,10)
+
+        self.splash.show()
+
+        # Close SplashScreen after 5 seconds (2000 ms)
+        QTimer.singleShot(5000, self.splash.close)
+        
+  
+        
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)    # launch application
+
+    demo = Appdemo()
+    demo.show()
+
+    try:                            # exit application
+        sys.exit(app.exec_())
+    except SystemExit:
+        print("Closing Window...")
